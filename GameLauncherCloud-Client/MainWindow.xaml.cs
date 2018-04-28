@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Path = System.IO.Path;
+
 namespace GameLauncherCloud_Client
 {
     /// <summary>
@@ -23,6 +25,25 @@ namespace GameLauncherCloud_Client
         public MainWindow()
         {
             InitializeComponent();
+
+            for (int i = 0; i < 4; i++)
+            {
+                RadioButton rb = new RadioButton() {
+                    Content = Path.GetFullPath("Resources/controllerRezised.png"),
+                    IsChecked = i == 0,
+                    Style = (Style)GameList.FindResource("Flag"),
+                    Width = 80,
+                    Height = 80
+                };
+                rb.Checked += (sender, args) =>
+                {
+                    Console.WriteLine("Pressed " + (sender as RadioButton).Tag);
+                };
+                rb.Unchecked += (sender, args) => { /* Do stuff */ };
+                rb.Tag = i;
+
+                GameList.Children.Add(rb);
+            }
         }
     }
 }

@@ -93,5 +93,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\controllerRezised.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Source\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
