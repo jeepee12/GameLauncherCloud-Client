@@ -22,22 +22,31 @@ namespace GameLauncherCloud_Client
     /// </summary>
     public partial class MainWindow : Window
     {
+        private GameCalculator gameCalculator;
+        private Game selectedGame;
+
         public MainWindow()
         {
             InitializeComponent();
 
-            int numberOfGame = 30;
-            
-            for (int i = 0; i < numberOfGame; i++)
+            gameCalculator = new GameCalculator();
+            AddGamesToUI();
+        }
+
+        private void AddGamesToUI()
+        {
+            bool firstGame = true;
+            foreach (Game game in gameCalculator.games)
             {
                 RadioButton rb = new RadioButton()
                 {
-                    IsChecked = i == 0,
+                    IsChecked = firstGame,
                     Width = 80,
                     Height = 80,
                     Margin = new Thickness(0, 0, 0, 0)
                 };
-                if (i % 2 == 0) // TODO if the image exist we use it, else, we show the game name
+
+                if (string.IsNullOrEmpty(game.Url)) // TODO if the image exist we use it, else, we show the game name
                 {
                     rb.Style = (Style)GameGrid.FindResource("GameImage");
                     rb.Content = Path.GetFullPath("Resources/controllerRezised.png");
@@ -45,32 +54,38 @@ namespace GameLauncherCloud_Client
                 else
                 {
                     rb.Style = (Style)GameGrid.FindResource("GameName");
-                    rb.Content = i.ToString();
+                    rb.Content = game.Name;
                 }
+                rb.Tag = game; // TODO store the game object in the tag.
+
                 rb.Checked += (sender, args) =>
                 {
-                    Console.WriteLine("Pressed " + (sender as RadioButton).Tag);
+                    selectedGame = game;
                 };
-                rb.Unchecked += (sender, args) => { /* Do stuff */ };
-                rb.Tag = i; // TODO store the game object in the tag.
-                
+
                 GameGrid.Children.Add(rb);
+
+                if (firstGame)
+                {
+                    firstGame = false;
+                    selectedGame = game;
+                }
             }
         }
 
         private void btnPlay_Click(object sender, RoutedEventArgs e)
         {
-            // TODO launch the selected game
+            LaunchGame();
         }
 
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
-            // TODO stop the timer
+            StopGame();
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            // TODO create and call save function (save to cloud)
+            gameCalculator.SaveData();
         }
 
         private void RefreshBtn_Click(object sender, RoutedEventArgs e)
@@ -80,7 +95,39 @@ namespace GameLauncherCloud_Client
 
         private void MainWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            // TODO save
+            StopGame();
+            gameCalculator.SaveData();
+        }
+
+        private void LaunchGame()
+        {
+            
+            string error = gameCalculator.LaunchGame(selectedGame);
+            if (string.IsNullOrWhiteSpace(error))
+            {
+                MessageBox.Show(error);
+            }
+            else
+            {
+                SetGamesRadio(false);
+            }
+        }
+
+        private void StopGame()
+        {
+            SetGamesRadio(false);
+            gameCalculator.StopGame();
+        }
+
+        private void SetGamesRadio(bool enable)
+        {
+            foreach (var child in GameGrid.Children)
+            {
+                if (child is RadioButton radioButton)
+                {
+                    radioButton.IsEnabled = enable;
+                }
+            }
         }
     }
 }

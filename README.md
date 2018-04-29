@@ -4,7 +4,7 @@ Software used to launch video games and compile gaming time.
 
 ## TODOs
 ### Windows client
-- [ ] Decide if I do it with Windows form or Xaml
+- [X] Decide if I do it with Windows form or Xaml
 
 - [ ] Create the base of the client (Launch the games and calculate game time)
 
