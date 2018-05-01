@@ -25,6 +25,8 @@ namespace GameLauncherCloud_Client
         private GameCalculator gameCalculator;
         private Game selectedGame;
 
+        // TODO add the possibility to add games
+
         public MainWindow()
         {
             InitializeComponent();
@@ -56,11 +58,12 @@ namespace GameLauncherCloud_Client
                     rb.Style = (Style)GameGrid.FindResource("GameName");
                     rb.Content = game.Name;
                 }
-                rb.Tag = game; // TODO store the game object in the tag.
+                //rb.Tag = game;
 
                 rb.Checked += (sender, args) =>
                 {
                     selectedGame = game;
+                    UpdateGameUi();
                 };
 
                 GameGrid.Children.Add(rb);
@@ -90,7 +93,7 @@ namespace GameLauncherCloud_Client
 
         private void RefreshBtn_Click(object sender, RoutedEventArgs e)
         {
-            // TODO refresh UI
+            RefreshGameTime();
         }
 
         private void MainWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -128,6 +131,26 @@ namespace GameLauncherCloud_Client
                     radioButton.IsEnabled = enable;
                 }
             }
+        }
+
+        private void UpdateGameUi()
+        {
+            GameName.Text = selectedGame.Name;
+            GameUrl.Text = selectedGame.Url;
+            Uri imageUri = new Uri($"ms-appx:///Resources/{selectedGame.ImageUrl}");
+            //Uri.TryCreate(selectedGame.ImageUrl, imageUri);
+            //if (imageUri.)
+            //GameImage.Source = new BitmapImage(imageUri);
+            
+
+            RefreshGameTime();
+        }
+
+        private void RefreshGameTime()
+        {
+            NbDays.Content = selectedGame.Time.NbDays;
+            NbHours.Content = selectedGame.Time.NbHours;
+            NbMinutes.Content = selectedGame.Time.NbMinutes;
         }
     }
 }

@@ -13,7 +13,7 @@
             <RowDefinition MinHeight="160" Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <UniformGrid x:Name="GameGrid" VerticalAlignment="Top" Columns="10" MinHeight="160">
+        <UniformGrid x:Name="GameGrid" VerticalAlignment="Top" MinHeight="160">
             <UniformGrid.Resources>
                 <Style x:Key="GameButton" TargetType="RadioButton">
                     <Style.Triggers>

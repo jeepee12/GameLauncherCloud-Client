@@ -8,10 +8,26 @@ namespace GameLauncherCloud_Client
 {
     class GameTime
     {
-        int NbMinutes;
+        public GameTime() : this(0)
+        {
+        }
 
-        public int NbHours => NbMinutes / 60;
+        public GameTime(int nbMinutes)
+        {
+            NbMinutes = nbMinutes;
+        }
 
-        public int NbDays => NbHours / 24;
+        private const int NbMinutesInHour = 60;
+        private const int NbHoursInDay = 24;
+        
+        public int NbMinutes
+        {
+            get;
+            set;
+        }
+
+        public int NbHours => NbMinutes / NbMinutesInHour;
+
+        public int NbDays => NbHours / NbHoursInDay;
     }
 }
