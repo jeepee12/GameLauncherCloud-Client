@@ -44,34 +44,8 @@ namespace GameLauncherCloud_Client
             bool firstGame = true;
             foreach (Game game in gameCalculator.games)
             {
-                RadioButton rb = new RadioButton()
-                {
-                    IsChecked = firstGame,
-                    Width = 80,
-                    Height = 80,
-                    Margin = new Thickness(0, 0, 0, 0)
-                };
-
-                if (!string.IsNullOrEmpty(game.ImageUrl) && File.Exists(game.ImageUrl))
-                { 
-                    rb.Style = (Style)GameGrid.FindResource("GameImage");
-                    rb.Content = Path.GetFullPath(game.ImageUrl);
-                }
-                else
-                {
-                    // TODO Support online image
-                    rb.Style = (Style)GameGrid.FindResource("GameName");
-                    rb.Content = game.Name;
-                }
-
-                rb.Checked += (sender, args) =>
-                {
-                    selectedGame = game;
-                    UpdateGameUi();
-                };
-
-                GameGrid.Children.Add(rb);
-
+                RadioButton rb = AddAGameToUi(game);
+                rb.IsChecked = firstGame;
                 if (firstGame)
                 {
                     firstGame = false;
@@ -163,6 +137,37 @@ namespace GameLauncherCloud_Client
             NbMinutes.Content = selectedGame.Time.NbMinutes;
         }
 
+        private RadioButton AddAGameToUi(Game game)
+        {
+            RadioButton rb = new RadioButton()
+            {
+                Width = 80,
+                Height = 80,
+                Margin = new Thickness(0, 0, 0, 0)
+            };
+
+            if (!string.IsNullOrEmpty(game.ImageUrl) && File.Exists(game.ImageUrl))
+            {
+                rb.Style = (Style)GameGrid.FindResource("GameImage");
+                rb.Content = Path.GetFullPath(game.ImageUrl);
+            }
+            else
+            {
+                // TODO Support online image
+                rb.Style = (Style)GameGrid.FindResource("GameName");
+                rb.Content = game.Name;
+            }
+
+            rb.Checked += (sender, args) =>
+            {
+                selectedGame = game;
+                UpdateGameUi();
+            };
+
+            GameGrid.Children.Add(rb);
+            return rb;
+        }
+
         private void GameImageUrl_OnTextChanged(object sender, TextChangedEventArgs e)
         {
             if (selectedGame != null)
@@ -179,6 +184,11 @@ namespace GameLauncherCloud_Client
         {
             if (selectedGame != null)
                 selectedGame.Name = GameName.Text;
+        }
+
+        private void AddAGameBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+            AddAGameToUi(gameCalculator.CreateANewGame());
         }
     }
 }

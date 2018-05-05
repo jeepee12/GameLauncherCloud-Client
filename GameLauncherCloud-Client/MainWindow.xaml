@@ -13,7 +13,7 @@
             <RowDefinition MinHeight="160" Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <UniformGrid x:Name="GameGrid" VerticalAlignment="Top" MinHeight="160">
+        <UniformGrid x:Name="GameGrid" VerticalAlignment="Top" MinHeight="160" Columns="10">
             <UniformGrid.Resources>
                 <Style x:Key="GameButton" TargetType="RadioButton">
                     <Style.Triggers>
@@ -79,9 +79,10 @@
             <Label x:Name="NbHours" Content="00" HorizontalAlignment="Left" Margin="188,69,0,0" VerticalAlignment="Top"/>
             <Label x:Name="NbMinutes" Content="00" HorizontalAlignment="Left" Margin="188,100,0,0" VerticalAlignment="Top"/>
             <TextBox x:Name="GameUrl" HorizontalAlignment="Left" Height="23" Margin="115,131,0,0" TextWrapping="Wrap" Text=".//gameurl" VerticalAlignment="Top" Width="297" TextChanged="GameUrl_OnTextChanged"/>
+            <TextBox x:Name="GameImageUrl" HorizontalAlignment="Right" Height="23" Margin="0,131,10,0" TextWrapping="Wrap" Text=".//gameImageurl" VerticalAlignment="Top" Width="402" TextChanged="GameImageUrl_OnTextChanged"/>
             <Button x:Name="SaveBtn" Content="Save" HorizontalAlignment="Left" Margin="749,10,0,0" VerticalAlignment="Top" Width="75" Click="SaveBtn_Click"/>
             <Button x:Name="RefreshBtn" Content="Refresh" HorizontalAlignment="Left" Margin="749,35,0,0" VerticalAlignment="Top" Width="75" Click="RefreshBtn_Click"/>
-            <TextBox x:Name="GameImageUrl" HorizontalAlignment="Right" Height="23" Margin="0,131,10,0" TextWrapping="Wrap" Text=".//gameImageurl" VerticalAlignment="Top" Width="402" TextChanged="GameImageUrl_OnTextChanged"/>
+            <Button x:Name="AddAGameBtn" Content="Add a game" HorizontalAlignment="Left" Margin="749,60,0,0" VerticalAlignment="Top" Width="75" Click="AddAGameBtn_OnClick"/>
         </Grid>
     </Grid>
 </Window>

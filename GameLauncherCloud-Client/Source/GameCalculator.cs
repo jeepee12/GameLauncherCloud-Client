@@ -20,8 +20,8 @@ namespace GameLauncherCloud_Client
             // TODO try to load from cloud
             games = new List<Game>();
 
-            games.Add(new Game("Starcraft", "shortcut//StarCraft II", "Resources//SC2.png", new GameTime())); //"Resources/controllerRezised.png"
-            games.Add(new Game("Hearthstone", "shortcut//LancerHearthstone.bat", "Resources//HearthStone.jpeg", new GameTime()));
+            games.Add(new Game(0, "Starcraft", "shortcut//StarCraft II", "Resources//SC2.png", new GameTime())); //"Resources/controllerRezised.png"
+            games.Add(new Game(1, "Hearthstone", "shortcut//LancerHearthstone.bat", "Resources//HearthStone.jpeg", new GameTime()));
 
 
             gameTimer.Interval = OneMinuteInMs;
@@ -49,6 +49,14 @@ namespace GameLauncherCloud_Client
                 errorMessage = "The game Url is null or empty";
             }
             return errorMessage;
+        }
+
+        public Game CreateANewGame()
+        {
+            // TODO Get a new id from the data base (maybe a GUIID)
+            Game game = new Game(0);
+            games.Add(game);
+            return game;
         }
 
         public void StopGame()

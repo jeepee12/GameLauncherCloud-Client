@@ -14,16 +14,17 @@ namespace GameLauncherCloud_Client
         public string ImageUrl;
         public GameTime Time;
 
-        public Game() : this("Game name", "", "", new GameTime())
+        public Game(int id) : this(id, "Game name", "", "", new GameTime())
         {
         }
 
-        public Game(string name) : this(name, "", "", new GameTime())
+        public Game(int id, string name) : this(id, name, "", "", new GameTime())
         {
         }
 
-        public Game(string name, string url, string imageUrl, GameTime time)
+        public Game(int id, string name, string url, string imageUrl, GameTime time)
         {
+            GameId = id;
             Name = name;
             Url = url;
             ImageUrl = imageUrl;
