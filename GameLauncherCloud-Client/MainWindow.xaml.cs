@@ -34,6 +34,13 @@ namespace GameLauncherCloud_Client
             InitializeComponent();
 
             gameCalculator = new GameCalculator();
+            UpdateGames();
+            // TODO add something in the UI to say that we are loading
+        }
+
+        private async Task UpdateGames()
+        {
+            await gameCalculator.Start();
             AddGamesToUi();
             UpdateGameUi();
         }
@@ -41,7 +48,7 @@ namespace GameLauncherCloud_Client
         private void AddGamesToUi()
         {
             bool firstGame = true;
-            foreach (Game game in gameCalculator.games)
+            foreach (Game game in gameCalculator.Games)
             {
                 RadioButton rb = AddAGameToUi(game);
                 rb.IsChecked = firstGame;
@@ -131,9 +138,10 @@ namespace GameLauncherCloud_Client
 
         private void RefreshGameTime()
         {
-            NbDays.Content = selectedGame.Time.NbDays;
-            NbHours.Content = selectedGame.Time.NbHours;
-            NbMinutes.Content = selectedGame.Time.NbMinutes;
+            GameTime total = selectedGame.CalculateTotalTime();
+            NbDays.Content = total.NbDays;
+            NbHours.Content = total.NbHours;
+            NbMinutes.Content = total.NbMinutes;
         }
 
         private RadioButton AddAGameToUi(Game game)

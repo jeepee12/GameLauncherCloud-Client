@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace GameLauncherCloud_Client
 {
-    class GameTime
+    public class GameTime
     {
         public GameTime() : this(0)
         {
@@ -19,7 +20,8 @@ namespace GameLauncherCloud_Client
 
         private const int NbMinutesInHour = 60;
         private const int NbHoursInDay = 24;
-        
+
+        [JsonProperty(PropertyName = "NbMinutes")]
         public int NbMinutes
         {
             get;
