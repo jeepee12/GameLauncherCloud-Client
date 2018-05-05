@@ -26,8 +26,7 @@ namespace GameLauncherCloud_Client
         private GameCalculator gameCalculator;
         private Game selectedGame;
         private const string DefaultImage = "pack://siteoforigin:,,,/Resources/controllerRezised.png";
-
-        // TODO add the possibility to add games
+        
         // TODO add the possibility to reorder games
 
         public MainWindow()
@@ -171,7 +170,10 @@ namespace GameLauncherCloud_Client
         private void GameImageUrl_OnTextChanged(object sender, TextChangedEventArgs e)
         {
             if (selectedGame != null)
+            {
                 selectedGame.ImageUrl = GameImageUrl.Text;
+                // TODO update game logo in the grid
+            }
         }
 
         private void GameUrl_OnTextChanged(object sender, TextChangedEventArgs e)

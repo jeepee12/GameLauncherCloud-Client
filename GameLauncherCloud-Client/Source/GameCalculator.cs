@@ -9,6 +9,11 @@ namespace GameLauncherCloud_Client
 {
     class GameCalculator
     {
+        // Firebase with C#
+        // Medium article: https://medium.com/step-up-labs/firebase-c-library-5c342989ad18
+        // FirebaseDatabase.net https://github.com/step-up-labs/firebase-database-dotnet
+        // FirebaseAuthentication.net https://github.com/step-up-labs/firebase-authentication-dotnet
+
         private const double OneMinuteInMs = 60000.0;
 
         public List<Game> games;
