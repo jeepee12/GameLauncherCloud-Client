@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,18 +25,21 @@ namespace GameLauncherCloud_Client
     {
         private GameCalculator gameCalculator;
         private Game selectedGame;
+        private const string DefaultImage = "pack://siteoforigin:,,,/Resources/controllerRezised.png";
 
         // TODO add the possibility to add games
+        // TODO add the possibility to reorder games
 
         public MainWindow()
         {
             InitializeComponent();
 
             gameCalculator = new GameCalculator();
-            AddGamesToUI();
+            AddGamesToUi();
+            UpdateGameUi();
         }
 
-        private void AddGamesToUI()
+        private void AddGamesToUi()
         {
             bool firstGame = true;
             foreach (Game game in gameCalculator.games)
@@ -48,17 +52,17 @@ namespace GameLauncherCloud_Client
                     Margin = new Thickness(0, 0, 0, 0)
                 };
 
-                if (string.IsNullOrEmpty(game.Url)) // TODO if the image exist we use it, else, we show the game name
-                {
+                if (!string.IsNullOrEmpty(game.ImageUrl) && File.Exists(game.ImageUrl))
+                { 
                     rb.Style = (Style)GameGrid.FindResource("GameImage");
-                    rb.Content = Path.GetFullPath("Resources/controllerRezised.png");
+                    rb.Content = Path.GetFullPath(game.ImageUrl);
                 }
                 else
                 {
+                    // TODO Support online image
                     rb.Style = (Style)GameGrid.FindResource("GameName");
                     rb.Content = game.Name;
                 }
-                //rb.Tag = game;
 
                 rb.Checked += (sender, args) =>
                 {
@@ -137,11 +141,17 @@ namespace GameLauncherCloud_Client
         {
             GameName.Text = selectedGame.Name;
             GameUrl.Text = selectedGame.Url;
-            Uri imageUri = new Uri($"ms-appx:///Resources/{selectedGame.ImageUrl}");
-            //Uri.TryCreate(selectedGame.ImageUrl, imageUri);
-            //if (imageUri.)
-            //GameImage.Source = new BitmapImage(imageUri);
-            
+
+            if (!string.IsNullOrEmpty(selectedGame.ImageUrl) && File.Exists(selectedGame.ImageUrl))
+            {
+                // For some reason, relative URL don't works
+                GameImage.Source = new BitmapImage(new Uri(Path.GetFullPath(selectedGame.ImageUrl), UriKind.Absolute));
+            }
+            else
+            {
+                // Default image
+                GameImage.Source = new BitmapImage(new Uri(DefaultImage));
+            }
 
             RefreshGameTime();
         }
@@ -151,6 +161,24 @@ namespace GameLauncherCloud_Client
             NbDays.Content = selectedGame.Time.NbDays;
             NbHours.Content = selectedGame.Time.NbHours;
             NbMinutes.Content = selectedGame.Time.NbMinutes;
+        }
+
+        private void GameImageUrl_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (selectedGame != null)
+                selectedGame.ImageUrl = GameImageUrl.Text;
+        }
+
+        private void GameUrl_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (selectedGame != null)
+                selectedGame.Url = GameUrl.Text;
+        }
+
+        private void GameName_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (selectedGame != null)
+                selectedGame.Name = GameName.Text;
         }
     }
 }
