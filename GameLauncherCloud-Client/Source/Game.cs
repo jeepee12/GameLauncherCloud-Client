@@ -8,6 +8,7 @@ namespace GameLauncherCloud_Client
 {
     class Game
     {
+        public int GameId;
         public string Name;
         public string Url;
         public string ImageUrl;
