@@ -26,8 +26,9 @@ namespace GameLauncherCloud_Client
         private GameCalculator gameCalculator;
         private FirebaseObject<Game> selectedGameDB;
         private Game SelectedGame => selectedGameDB?.Object;
+        private RadioButton selectedGameRadioButton;
         private const string DefaultImage = "pack://siteoforigin:,,,/Resources/controllerRezised.png";
-        
+
         // TODO add the possibility to reorder games
 
         public MainWindow()
@@ -60,7 +61,7 @@ namespace GameLauncherCloud_Client
                 if (firstGame)
                 {
                     firstGame = false;
-                    selectedGameDB = game;
+                    rb.IsChecked = true;
                 }
             }
         }
@@ -93,7 +94,7 @@ namespace GameLauncherCloud_Client
 
         private void LaunchGame()
         {
-            
+
             string error = gameCalculator.LaunchGame(selectedGameDB);
             if (string.IsNullOrWhiteSpace(error))
             {
@@ -126,6 +127,7 @@ namespace GameLauncherCloud_Client
         {
             GameName.Text = SelectedGame.Name;
             GameUrl.Text = SelectedGame.Url;
+            GameImageUrl.Text = SelectedGame.ImageUrl;
 
             if (!string.IsNullOrEmpty(SelectedGame.ImageUrl) && File.Exists(SelectedGame.ImageUrl))
             {
@@ -139,6 +141,21 @@ namespace GameLauncherCloud_Client
             }
 
             RefreshGameTime();
+        }
+
+        private void UpdateRadioButtonImage(RadioButton rb, Game game)
+        {
+            if (!string.IsNullOrEmpty(game.ImageUrl) && File.Exists(game.ImageUrl))
+            {
+                rb.Style = (Style)GameGrid.FindResource("GameImage");
+                rb.Content = Path.GetFullPath(game.ImageUrl);
+            }
+            else
+            {
+                // TODO Support online image
+                rb.Style = (Style)GameGrid.FindResource("GameName");
+                rb.Content = game.Name;
+            }
         }
 
         private void RefreshGameTime()
@@ -159,21 +176,12 @@ namespace GameLauncherCloud_Client
                 Margin = new Thickness(0, 0, 0, 0)
             };
 
-            if (!string.IsNullOrEmpty(game.ImageUrl) && File.Exists(game.ImageUrl))
-            {
-                rb.Style = (Style)GameGrid.FindResource("GameImage");
-                rb.Content = Path.GetFullPath(game.ImageUrl);
-            }
-            else
-            {
-                // TODO Support online image
-                rb.Style = (Style)GameGrid.FindResource("GameName");
-                rb.Content = game.Name;
-            }
+            UpdateRadioButtonImage(rb, game);
 
             rb.Checked += (sender, args) =>
             {
                 selectedGameDB = gameDB;
+                selectedGameRadioButton = rb;
                 UpdateGameUi();
             };
 
@@ -183,23 +191,32 @@ namespace GameLauncherCloud_Client
 
         private void GameImageUrl_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (SelectedGame != null)
+            if (SelectedGame != null && SelectedGame.ImageUrl != GameImageUrl.Text)
             {
                 SelectedGame.ImageUrl = GameImageUrl.Text;
-                // TODO update game logo in the grid
+                gameCalculator.NotifyGameInformationUpdated(selectedGameDB);
+                UpdateGameUi();
+                UpdateRadioButtonImage(selectedGameRadioButton, SelectedGame);
             }
         }
 
         private void GameUrl_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (SelectedGame != null)
+            if (SelectedGame != null && SelectedGame.Url != GameUrl.Text)
+            {
                 SelectedGame.Url = GameUrl.Text;
+                gameCalculator.NotifyGameInformationUpdated(selectedGameDB);
+            }
         }
 
         private void GameName_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (SelectedGame != null)
+            if (SelectedGame != null && SelectedGame.Name != GameName.Text)
+            {
                 SelectedGame.Name = GameName.Text;
+
+                gameCalculator.NotifyGameInformationUpdated(selectedGameDB);
+            }
         }
 
         private void AddAGameBtn_OnClick(object sender, RoutedEventArgs e)

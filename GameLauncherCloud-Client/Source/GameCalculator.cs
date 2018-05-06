@@ -19,6 +19,7 @@ namespace GameLauncherCloud_Client
         // File upload https://github.com/step-up-labs/firebase-storage-dotnet
 
         private const double OneMinuteInMs = 60000.0;
+        private const string GamesDBName = "Games";
 
         public List<FirebaseObject<Game>> Games;
         private List<FirebaseObject<Game>> gamesUpdated;
@@ -34,11 +35,9 @@ namespace GameLauncherCloud_Client
 
         public async Task Start()
         {
-            // TODO try to load from cloud
             firebaseClient = new FirebaseClient("https://tritor-game-launcher.firebaseio.com/");
             Games = new List<FirebaseObject<Game>>();
             gamesUpdated = new List<FirebaseObject<Game>>();
-
 
             //Game starcraft = new Game("Starcraft", "shortcut//StarCraft II", "Resources//SC2.png",
             //    new List<KeyValuePair<DateTime, GameTime>>());
@@ -53,13 +52,19 @@ namespace GameLauncherCloud_Client
             //await PushNewGameToDataBase(starcraft);
             //await PushNewGameToDataBase(hearhstone);
 
+            var games = await firebaseClient
+                .Child(GamesDBName)
+                .OnceAsync<Game>();
+            Games.AddRange(games);
+            // TODO make sure the times are sync
+
             gameTimer.Interval = OneMinuteInMs;
             gameTimer.Elapsed += OnTimedEvent;
         }
 
         private async Task<FirebaseObject<Game>> PushNewGameToDataBase(Game game)
         {
-            FirebaseObject<Game> task = await firebaseClient.Child("Games").PostAsync(game);
+            FirebaseObject<Game> task = await firebaseClient.Child(GamesDBName).PostAsync(game);
             Games.Add(task);
             return task;
         }
@@ -122,16 +127,17 @@ namespace GameLauncherCloud_Client
             gameTimer.Enabled = false;
             // Create a timestamp with the date of the time played
             currentGame?.Object.GameTimes.Add(new KeyValuePair<DateTime, GameTime>(DateTime.Now, currentTime)); // Maybe we should push this new time directly to the database
+            // TODO push the time stamp and gametime directly to the database
         }
 
-        public void SaveData()
+        public async Task SaveData()
         {
-            // TODO Push the data to the cloud
             // Probably only push the games information (name, url, etc)
             foreach (FirebaseObject<Game> game in gamesUpdated)
             {
-
+                await firebaseClient.Child(GamesDBName).Child(game.Key).PatchAsync(game.Object);
             }
+            gamesUpdated.Clear();
         }
 
         public async Task<FirebaseObject<Game>> CreateANewGame()
@@ -142,7 +148,8 @@ namespace GameLauncherCloud_Client
 
         public void NotifyGameInformationUpdated(FirebaseObject<Game> game)
         {
-            gamesUpdated.Add(game);
+            if (!gamesUpdated.Contains(game))
+                gamesUpdated.Add(game);
         }
 
         private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
