@@ -38,7 +38,6 @@ namespace GameLauncherCloud_Client
 
             gameCalculator = new GameCalculator();
             UpdateGames();
-            // TODO add something in the UI to say that we are loading
         }
 
         private async Task UpdateGames()
