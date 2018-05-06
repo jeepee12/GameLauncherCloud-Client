@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using Firebase.Database;
 using Path = System.IO.Path;
 
 namespace GameLauncherCloud_Client
@@ -24,7 +24,8 @@ namespace GameLauncherCloud_Client
     public partial class MainWindow : Window
     {
         private GameCalculator gameCalculator;
-        private Game selectedGame;
+        private FirebaseObject<Game> selectedGameDB;
+        private Game SelectedGame => selectedGameDB?.Object;
         private const string DefaultImage = "pack://siteoforigin:,,,/Resources/controllerRezised.png";
         
         // TODO add the possibility to reorder games
@@ -47,15 +48,19 @@ namespace GameLauncherCloud_Client
 
         private void AddGamesToUi()
         {
+            // Remove the loading label
+            GameGrid.Children.Clear();
+            ControlGrid.IsEnabled = true;
+
             bool firstGame = true;
-            foreach (Game game in gameCalculator.Games)
+            foreach (FirebaseObject<Game> game in gameCalculator.Games)
             {
                 RadioButton rb = AddAGameToUi(game);
                 rb.IsChecked = firstGame;
                 if (firstGame)
                 {
                     firstGame = false;
-                    selectedGame = game;
+                    selectedGameDB = game;
                 }
             }
         }
@@ -89,7 +94,7 @@ namespace GameLauncherCloud_Client
         private void LaunchGame()
         {
             
-            string error = gameCalculator.LaunchGame(selectedGame);
+            string error = gameCalculator.LaunchGame(selectedGameDB);
             if (string.IsNullOrWhiteSpace(error))
             {
                 MessageBox.Show(error);
@@ -119,13 +124,13 @@ namespace GameLauncherCloud_Client
 
         private void UpdateGameUi()
         {
-            GameName.Text = selectedGame.Name;
-            GameUrl.Text = selectedGame.Url;
+            GameName.Text = SelectedGame.Name;
+            GameUrl.Text = SelectedGame.Url;
 
-            if (!string.IsNullOrEmpty(selectedGame.ImageUrl) && File.Exists(selectedGame.ImageUrl))
+            if (!string.IsNullOrEmpty(SelectedGame.ImageUrl) && File.Exists(SelectedGame.ImageUrl))
             {
                 // For some reason, relative URL don't works
-                GameImage.Source = new BitmapImage(new Uri(Path.GetFullPath(selectedGame.ImageUrl), UriKind.Absolute));
+                GameImage.Source = new BitmapImage(new Uri(Path.GetFullPath(SelectedGame.ImageUrl), UriKind.Absolute));
             }
             else
             {
@@ -138,14 +143,15 @@ namespace GameLauncherCloud_Client
 
         private void RefreshGameTime()
         {
-            GameTime total = selectedGame.CalculateTotalTime();
+            GameTime total = SelectedGame.CalculateTotalTime();
             NbDays.Content = total.NbDays;
             NbHours.Content = total.NbHours;
             NbMinutes.Content = total.NbMinutes;
         }
 
-        private RadioButton AddAGameToUi(Game game)
+        private RadioButton AddAGameToUi(FirebaseObject<Game> gameDB)
         {
+            Game game = gameDB.Object;
             RadioButton rb = new RadioButton()
             {
                 Width = 80,
@@ -167,7 +173,7 @@ namespace GameLauncherCloud_Client
 
             rb.Checked += (sender, args) =>
             {
-                selectedGame = game;
+                selectedGameDB = gameDB;
                 UpdateGameUi();
             };
 
@@ -177,28 +183,33 @@ namespace GameLauncherCloud_Client
 
         private void GameImageUrl_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (selectedGame != null)
+            if (SelectedGame != null)
             {
-                selectedGame.ImageUrl = GameImageUrl.Text;
+                SelectedGame.ImageUrl = GameImageUrl.Text;
                 // TODO update game logo in the grid
             }
         }
 
         private void GameUrl_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (selectedGame != null)
-                selectedGame.Url = GameUrl.Text;
+            if (SelectedGame != null)
+                SelectedGame.Url = GameUrl.Text;
         }
 
         private void GameName_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (selectedGame != null)
-                selectedGame.Name = GameName.Text;
+            if (SelectedGame != null)
+                SelectedGame.Name = GameName.Text;
         }
 
         private void AddAGameBtn_OnClick(object sender, RoutedEventArgs e)
         {
-            AddAGameToUi(gameCalculator.CreateANewGame());
+            AddANewGameToUiAsync();
+        }
+
+        private async Task AddANewGameToUiAsync()
+        {
+            AddAGameToUi(await gameCalculator.CreateANewGame());
         }
     }
 }

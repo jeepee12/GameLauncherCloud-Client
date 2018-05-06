@@ -9,8 +9,6 @@ namespace GameLauncherCloud_Client
 {
     public class Game
     {
-        [JsonProperty(PropertyName = "GameId")]
-        public int GameId;
         [JsonProperty(PropertyName = "Name")]
         public string Name;
         [JsonProperty(PropertyName = "Url")]
@@ -21,21 +19,16 @@ namespace GameLauncherCloud_Client
         [JsonProperty(PropertyName = "Gametimes")]
         public List<KeyValuePair<DateTime, GameTime>> GameTimes;
 
-        public Game() : this(0, "Game name", "", "", new List<KeyValuePair<DateTime, GameTime>>())
+        public Game() : this("Game name", "", "", new List<KeyValuePair<DateTime, GameTime>>())
         {
         }
 
-        public Game(int id) : this(id, "Game name", "", "", new List<KeyValuePair<DateTime, GameTime>>())
+        public Game(string name) : this(name, "", "", new List<KeyValuePair<DateTime, GameTime>>())
         {
         }
 
-        public Game(int id, string name) : this(id, name, "", "", new List<KeyValuePair<DateTime, GameTime>>())
+        public Game(string name, string url, string imageUrl, List<KeyValuePair<DateTime, GameTime>> gameTimes)
         {
-        }
-
-        public Game(int id, string name, string url, string imageUrl, List<KeyValuePair<DateTime, GameTime>> gameTimes)
-        {
-            GameId = id;
             Name = name;
             Url = url;
             ImageUrl = imageUrl;

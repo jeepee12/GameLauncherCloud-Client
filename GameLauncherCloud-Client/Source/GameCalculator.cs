@@ -20,14 +20,13 @@ namespace GameLauncherCloud_Client
 
         private const double OneMinuteInMs = 60000.0;
 
-        public List<Game> Games;
-        private List<Game> gamesUpdated;
+        public List<FirebaseObject<Game>> Games;
+        private List<FirebaseObject<Game>> gamesUpdated;
 
         private FirebaseClient firebaseClient;
         private Timer gameTimer = new Timer();
         private GameTime currentTime;
-        private Game currentGame;
-        private int lastUsedId;
+        private FirebaseObject<Game> currentGame;
 
         public GameCalculator()
         {
@@ -37,41 +36,42 @@ namespace GameLauncherCloud_Client
         {
             // TODO try to load from cloud
             firebaseClient = new FirebaseClient("https://tritor-game-launcher.firebaseio.com/");
-            Games = new List<Game>();
-            gamesUpdated = new List<Game>();
-            // update last usedId (if game.id > lastusedid
+            Games = new List<FirebaseObject<Game>>();
+            gamesUpdated = new List<FirebaseObject<Game>>();
 
 
-            Game starcraft = new Game(0, "Starcraft", "shortcut//StarCraft II", "Resources//SC2.png",
-                new List<KeyValuePair<DateTime, GameTime>>());
-            Game hearhstone = new Game(1, "Hearthstone", "shortcut//LancerHearthstone.bat",
-                "Resources//HearthStone.jpeg", new List<KeyValuePair<DateTime, GameTime>>());
-            Games.Add(starcraft); //"Resources/controllerRezised.png"
-            Games.Add(hearhstone);
-            lastUsedId = 1;
-            gamesUpdated.Add(starcraft);
-            gamesUpdated.Add(hearhstone);
+            //Game starcraft = new Game("Starcraft", "shortcut//StarCraft II", "Resources//SC2.png",
+            //    new List<KeyValuePair<DateTime, GameTime>>());
+            //Game hearhstone = new Game("Hearthstone", "shortcut//LancerHearthstone.bat",
+            //    "Resources//HearthStone.jpeg", new List<KeyValuePair<DateTime, GameTime>>());
 
-            //Run().Wait();
-            //var task = Run();
-            //task.ConfigureAwait(false);
-            //task.Wait();
-            await Task.Run(Run);
+            //Games.Add(); //"Resources/controllerRezised.png"
+            //Games.Add(hearhstone);
+            //gamesUpdated.Add(starcraft);
+            //gamesUpdated.Add(hearhstone);
 
+            //await PushNewGameToDataBase(starcraft);
+            //await PushNewGameToDataBase(hearhstone);
 
             gameTimer.Interval = OneMinuteInMs;
             gameTimer.Elapsed += OnTimedEvent;
         }
 
-
-        private async Task Run()
-        //private async void Run()
+        private async Task<FirebaseObject<Game>> PushNewGameToDataBase(Game game)
         {
+            FirebaseObject<Game> task = await firebaseClient.Child("Games").PostAsync(game);
+            Games.Add(task);
+            return task;
+        }
+
+        /* Firebase examples */
+        //private async Task Run()
+        //{
             //var dinos = await firebaseClient
             //.Child("Games")
             //.OrderByKey().OnceAsync<Game>();
-            var task = await firebaseClient.Child("Games").PostAsync(new Game()).ConfigureAwait(false);
-            Games.Add(task.Object);
+            //var task = await firebaseClient.Child("Games").PostAsync(new Game()).ConfigureAwait(false);
+            //Games.Add(task);
             //var task = firebaseClient.Child("Games").PostAsync(new Game());
             //task.Wait(1000);
             //Games.Add(task.Result.Object);
@@ -91,17 +91,17 @@ namespace GameLauncherCloud_Client
             //    .StartAt("pterodactyl")
             //    .LimitToFirst(2)
             //    .OnceAsync<Game>();
-        }
+        //}
 
-        public string LaunchGame(Game game)
+        public string LaunchGame(FirebaseObject<Game> game)
         {
             string errorMessage = null;
             currentGame = game;
-            if (!string.IsNullOrWhiteSpace(currentGame.Url))
+            if (!string.IsNullOrWhiteSpace(currentGame.Object.Url))
             {
                 try
                 {
-                    System.Diagnostics.Process.Start(currentGame.Url);
+                    System.Diagnostics.Process.Start(currentGame.Object.Url);
                     gameTimer.Enabled = true;
                     currentTime = new GameTime();
                 }
@@ -121,28 +121,26 @@ namespace GameLauncherCloud_Client
         {
             gameTimer.Enabled = false;
             // Create a timestamp with the date of the time played
-            currentGame?.GameTimes.Add(new KeyValuePair<DateTime, GameTime>(DateTime.Now, currentTime)); // Maybe we should push this new time directly to the database
+            currentGame?.Object.GameTimes.Add(new KeyValuePair<DateTime, GameTime>(DateTime.Now, currentTime)); // Maybe we should push this new time directly to the database
         }
 
         public void SaveData()
         {
             // TODO Push the data to the cloud
             // Probably only push the games information (name, url, etc)
-            foreach (Game game in gamesUpdated)
+            foreach (FirebaseObject<Game> game in gamesUpdated)
             {
 
             }
         }
 
-        public Game CreateANewGame()
+        public async Task<FirebaseObject<Game>> CreateANewGame()
         {
-            ++lastUsedId;
-            Game game = new Game(lastUsedId);
-            Games.Add(game);
-            return game;
+            Game game = new Game();
+            return await PushNewGameToDataBase(game);
         }
 
-        public void NotifyGameInformationUpdated(Game game)
+        public void NotifyGameInformationUpdated(FirebaseObject<Game> game)
         {
             gamesUpdated.Add(game);
         }
