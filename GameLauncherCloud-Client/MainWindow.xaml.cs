@@ -87,29 +87,28 @@ namespace GameLauncherCloud_Client
             RefreshGameTime();
         }
 
-        private async void MainWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!isClosing)
             {
-                //e.Cancel = true;
-                await CloseAsync();
-                //e.Cancel = false;
+                e.Cancel = true;
+                CloseAsync();
             }
         }
 
         private async Task CloseAsync()
         {
             StopGame();
-            //var saving = gameCalculator.SaveData();
-            await gameCalculator.SaveData();
+            var saving = gameCalculator.SaveData();
             ControlGrid.IsEnabled = false;
             GameGrid.Children.Clear();
             GameGrid.Children.Add(new Label() {Content = "Closing..."});
-            //saving.Wait();
-            //await saving;
+
+            await Task.Yield();
+            await saving;
             isClosing = true;
-            //this.OnClosing(null);
-            //Close();
+
+            Close();
         }
 
         private void LaunchGame()
