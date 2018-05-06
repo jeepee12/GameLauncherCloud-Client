@@ -117,7 +117,7 @@ namespace GameLauncherCloud_Client
             }
             else
             {
-                errorMessage = "The game Url is null or empty";
+                errorMessage = "The game Url is null or empty.";
             }
             return errorMessage;
         }
@@ -125,9 +125,15 @@ namespace GameLauncherCloud_Client
         public void StopGame()
         {
             gameTimer.Enabled = false;
-            // Create a timestamp with the date of the time played
-            currentGame?.Object.GameTimes.Add(new KeyValuePair<DateTime, GameTime>(DateTime.Now, currentTime)); // Maybe we should push this new time directly to the database
-            // TODO push the time stamp and gametime directly to the database
+            if (currentTime != null && currentTime.NbMinutes > 0)
+            {
+                // Create a timestamp with the date of the time played
+                currentGame?.Object.GameTimes.Add(
+                    new KeyValuePair<DateTime, GameTime>(DateTime.Now,
+                        currentTime)); // Maybe we should push this new time directly to the database
+                // TODO push the time stamp and gametime directly to the database
+                gamesUpdated.Add(currentGame);
+            }
         }
 
         public async Task SaveData()

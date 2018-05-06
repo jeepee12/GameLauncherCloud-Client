@@ -28,6 +28,7 @@ namespace GameLauncherCloud_Client
         private Game SelectedGame => selectedGameDB?.Object;
         private RadioButton selectedGameRadioButton;
         private const string DefaultImage = "pack://siteoforigin:,,,/Resources/controllerRezised.png";
+        private bool isClosing = false;
 
         // TODO add the possibility to reorder games
 
@@ -86,17 +87,36 @@ namespace GameLauncherCloud_Client
             RefreshGameTime();
         }
 
-        private void MainWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private async void MainWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!isClosing)
+            {
+                //e.Cancel = true;
+                await CloseAsync();
+                //e.Cancel = false;
+            }
+        }
+
+        private async Task CloseAsync()
         {
             StopGame();
-            gameCalculator.SaveData();
+            //var saving = gameCalculator.SaveData();
+            await gameCalculator.SaveData();
+            ControlGrid.IsEnabled = false;
+            GameGrid.Children.Clear();
+            GameGrid.Children.Add(new Label() {Content = "Closing..."});
+            //saving.Wait();
+            //await saving;
+            isClosing = true;
+            //this.OnClosing(null);
+            //Close();
         }
 
         private void LaunchGame()
         {
 
             string error = gameCalculator.LaunchGame(selectedGameDB);
-            if (string.IsNullOrWhiteSpace(error))
+            if (!string.IsNullOrWhiteSpace(error))
             {
                 MessageBox.Show(error);
             }
@@ -108,12 +128,14 @@ namespace GameLauncherCloud_Client
 
         private void StopGame()
         {
-            SetGamesRadio(false);
+            SetGamesRadio(true);
             gameCalculator.StopGame();
         }
 
         private void SetGamesRadio(bool enable)
         {
+            PlayBtn.IsEnabled = enable;
+            StopBtn.IsEnabled = !enable;
             foreach (var child in GameGrid.Children)
             {
                 if (child is RadioButton radioButton)
