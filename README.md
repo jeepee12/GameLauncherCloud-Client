@@ -6,12 +6,14 @@ Software used to launch video games and compile gaming time.
 ### Windows client
 - [X] Decide if I do it with Windows form or Xaml
 
-- [ ] Create the base of the client (Launch the games and calculate game time)
+- [X] Create the base of the client (Launch the games and calculate game time)
 
-- [ ] Push the client data to the database
+- [X] Push the client data to the database
+
+- [ ] Various code and UX improvements
 
 ### Database
-- [ ] Create the data base on fire base
+- [X] Create the data base on fire base
 
 ### Data viewer
 - [ ] Create a client to see the database data
