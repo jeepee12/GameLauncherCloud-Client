@@ -18,8 +18,8 @@ namespace GameLauncherCloud_Client
             NbMinutes = nbMinutes;
         }
 
-        private const int NbMinutesInHour = 60;
-        private const int NbHoursInDay = 24;
+        public const int NbMinutesInHour = 60;
+        public const int NbHoursInDay = 24;
 
         [JsonProperty(PropertyName = "NbMinutes")]
         public int NbMinutes
@@ -28,8 +28,10 @@ namespace GameLauncherCloud_Client
             set;
         }
 
+        [JsonIgnore]
         public int NbHours => NbMinutes / NbMinutesInHour;
 
+        [JsonIgnore]
         public int NbDays => NbHours / NbHoursInDay;
     }
 }

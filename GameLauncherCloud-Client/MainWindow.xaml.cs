@@ -183,8 +183,8 @@ namespace GameLauncherCloud_Client
         {
             GameTime total = SelectedGame.CalculateTotalTime();
             NbDays.Content = total.NbDays;
-            NbHours.Content = total.NbHours;
-            NbMinutes.Content = total.NbMinutes;
+            NbHours.Content = total.NbHours % GameTime.NbHoursInDay;
+            NbMinutes.Content = total.NbMinutes % GameTime.NbMinutesInHour;
         }
 
         private RadioButton AddAGameToUi(FirebaseObject<Game> gameDB)
