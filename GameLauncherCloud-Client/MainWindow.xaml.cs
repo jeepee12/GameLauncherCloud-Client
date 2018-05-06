@@ -89,6 +89,7 @@ namespace GameLauncherCloud_Client
 
         private void MainWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            // Thx to : https://stackoverflow.com/questions/16656523/awaiting-asynchronous-function-inside-formclosing-event
             if (!isClosing)
             {
                 e.Cancel = true;

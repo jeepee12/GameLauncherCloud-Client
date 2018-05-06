@@ -39,24 +39,10 @@ namespace GameLauncherCloud_Client
             Games = new List<FirebaseObject<Game>>();
             gamesUpdated = new List<FirebaseObject<Game>>();
 
-            //Game starcraft = new Game("Starcraft", "shortcut//StarCraft II", "Resources//SC2.png",
-            //    new List<KeyValuePair<DateTime, GameTime>>());
-            //Game hearhstone = new Game("Hearthstone", "shortcut//LancerHearthstone.bat",
-            //    "Resources//HearthStone.jpeg", new List<KeyValuePair<DateTime, GameTime>>());
-
-            //Games.Add(); //"Resources/controllerRezised.png"
-            //Games.Add(hearhstone);
-            //gamesUpdated.Add(starcraft);
-            //gamesUpdated.Add(hearhstone);
-
-            //await PushNewGameToDataBase(starcraft);
-            //await PushNewGameToDataBase(hearhstone);
-
             var games = await firebaseClient
                 .Child(GamesDBName)
                 .OnceAsync<Game>();
             Games.AddRange(games);
-            // TODO make sure the times are sync
 
             gameTimer.Interval = OneMinuteInMs;
             gameTimer.Elapsed += OnTimedEvent;
@@ -132,6 +118,8 @@ namespace GameLauncherCloud_Client
                     new KeyValuePair<DateTime, GameTime>(DateTime.Now,
                         currentTime)); // Maybe we should push this new time directly to the database
                 // TODO push the time stamp and gametime directly to the database
+                // Reset the timer
+                currentTime.NbMinutes = 0;
                 gamesUpdated.Add(currentGame);
             }
         }
