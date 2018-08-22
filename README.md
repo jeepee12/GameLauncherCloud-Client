@@ -16,7 +16,7 @@ Software used to launch video games and compile gaming time.
 - [X] Create the data base on fire base
 
 ### Data viewer
-- [ ] Create a client to see the database data
+- [X] Create a client to see the database data
 
 ### Steam data
 - [ ] Fetch and push the Steam data in the database
