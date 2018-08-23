@@ -29,12 +29,15 @@ namespace GameLauncherCloud_Client
         private GameTime currentTime;
         private FirebaseObject<Game> currentGame;
 
+        private SteamAPIHandler steamAPI;
+
         public GameCalculator()
         {
         }
 
         public async Task Start()
         {
+            // Firebase
             firebaseClient = new FirebaseClient("https://tritor-game-launcher.firebaseio.com/");
             Games = new List<FirebaseObject<Game>>();
             gamesUpdated = new List<FirebaseObject<Game>>();
@@ -46,6 +49,29 @@ namespace GameLauncherCloud_Client
 
             gameTimer.Interval = OneMinuteInMs;
             gameTimer.Elapsed += OnTimedEvent;
+
+            // Steam
+            steamAPI = new SteamAPIHandler();
+            steamAPI.Start();
+            var steamGamesTask = steamAPI.GetAllGames();
+            await steamGamesTask;
+            foreach (Game game in steamGamesTask.Result)
+            {
+                var gameInDB = Games.Find(dbGame => dbGame.Object.Url == game.Url);
+                var steamTotalTime = game.GameTimes.First().Value;
+                if (gameInDB != null)
+                {
+                    var totalTime = gameInDB.Object.CalculateTotalTime();
+                    if (totalTime < steamTotalTime)
+                    {
+                        gameInDB.Object.GameTimes.Add(new KeyValuePair<DateTime, GameTime>(DateTime.Now, steamTotalTime - totalTime));
+                    }
+                }
+                else if (steamTotalTime.GreaterThanZero())
+                {
+                    PushNewGameToDataBase(game);
+                }
+            }
         }
 
         private async Task<FirebaseObject<Game>> PushNewGameToDataBase(Game game)

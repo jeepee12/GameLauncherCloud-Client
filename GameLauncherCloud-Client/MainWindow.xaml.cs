@@ -56,6 +56,9 @@ namespace GameLauncherCloud_Client
             bool firstGame = true;
             foreach (FirebaseObject<Game> game in gameCalculator.Games)
             {
+                if (game.Object.IsSteamGame)
+                    continue;
+                
                 RadioButton rb = AddAGameToUi(game);
                 rb.IsChecked = firstGame;
                 if (firstGame)

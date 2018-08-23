@@ -18,6 +18,11 @@ namespace GameLauncherCloud_Client
             NbMinutes = nbMinutes;
         }
 
+        public bool GreaterThanZero()
+        {
+            return NbMinutes > 0;
+        }
+
         public const int NbMinutesInHour = 60;
         public const int NbHoursInDay = 24;
 
@@ -33,5 +38,21 @@ namespace GameLauncherCloud_Client
 
         [JsonIgnore]
         public int NbDays => NbHours / NbHoursInDay;
+
+
+        public static bool operator <(GameTime left, GameTime right)
+        {
+            return left.NbMinutes < right.NbMinutes;
+        }
+
+        public static bool operator >(GameTime left, GameTime right)
+        {
+            return left.NbMinutes > right.NbMinutes;
+        }
+
+        public static GameTime operator -(GameTime a, GameTime b)
+        {
+            return new GameTime(a.NbMinutes - b.NbMinutes);
+        }
     }
 }
