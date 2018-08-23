@@ -22,16 +22,28 @@ namespace GameLauncherCloud_Client
         {
         }
 
-        public void Start()
+        public bool Start()
         {
             // Load the api key from the file.
+            if (!File.Exists(PathToTheKey))
+            {
+                return false;
+            }
             apiKey = File.ReadAllText(PathToTheKey).Trim();
+            if (!File.Exists(PathToTheID))
+            {
+                return false;
+            }
             string playerIdText = File.ReadAllText(PathToTheID).Trim();
             // todo return if failed
-            ulong.TryParse(playerIdText, out userId);
+            if (!ulong.TryParse(playerIdText, out userId))
+            {
+                return false;
+            }
 
             steamUser = new PlayerService(apiKey);
             steamStats = new SteamUserStats(apiKey);
+            return true;
         }
 
         public async Task<List<Game>> GetAllGames()

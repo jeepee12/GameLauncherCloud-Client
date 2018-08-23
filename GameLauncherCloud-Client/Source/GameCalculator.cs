@@ -52,24 +52,29 @@ namespace GameLauncherCloud_Client
 
             // Steam
             steamAPI = new SteamAPIHandler();
-            steamAPI.Start();
-            var steamGamesTask = steamAPI.GetAllGames();
-            await steamGamesTask;
-            foreach (Game game in steamGamesTask.Result)
+            if (steamAPI.Start())
             {
-                var gameInDB = Games.Find(dbGame => dbGame.Object.Url == game.Url);
-                var steamTotalTime = game.GameTimes.First().Value;
-                if (gameInDB != null)
+                var steamGamesTask = steamAPI.GetAllGames();
+
+
+                await steamGamesTask;
+                foreach (Game game in steamGamesTask.Result)
                 {
-                    var totalTime = gameInDB.Object.CalculateTotalTime();
-                    if (totalTime < steamTotalTime)
+                    var gameInDB = Games.Find(dbGame => dbGame.Object.Url == game.Url);
+                    var steamTotalTime = game.GameTimes.First().Value;
+                    if (gameInDB != null)
                     {
-                        gameInDB.Object.GameTimes.Add(new KeyValuePair<DateTime, GameTime>(DateTime.Now, steamTotalTime - totalTime));
+                        var totalTime = gameInDB.Object.CalculateTotalTime();
+                        if (totalTime < steamTotalTime)
+                        {
+                            gameInDB.Object.GameTimes.Add(
+                                new KeyValuePair<DateTime, GameTime>(DateTime.Now, steamTotalTime - totalTime));
+                        }
                     }
-                }
-                else if (steamTotalTime.GreaterThanZero())
-                {
-                    PushNewGameToDataBase(game);
+                    else if (steamTotalTime.GreaterThanZero())
+                    {
+                        PushNewGameToDataBase(game);
+                    }
                 }
             }
         }
@@ -84,30 +89,30 @@ namespace GameLauncherCloud_Client
         /* Firebase examples */
         //private async Task Run()
         //{
-            //var dinos = await firebaseClient
-            //.Child("Games")
-            //.OrderByKey().OnceAsync<Game>();
-            //var task = await firebaseClient.Child("Games").PostAsync(new Game()).ConfigureAwait(false);
-            //Games.Add(task);
-            //var task = firebaseClient.Child("Games").PostAsync(new Game());
-            //task.Wait(1000);
-            //Games.Add(task.Result.Object);
-            //var task2 = await firebaseClient.Child("Games").PostAsync(Games[0]);
-            //task.
-            //task.RunSynchronously();
-            //task.Start();
-            //task.Wait();
-            //var testGame = task.Result;
-            //await firebaseClient
-            //    .Child("dinosaurs")
-            //    .Child("t-rex")
-            //    .PutAsync(new Game());
-            //var dinos = await firebaseClient
-            //    .Child("dinosaurs")
-            //    .OrderByKey()
-            //    .StartAt("pterodactyl")
-            //    .LimitToFirst(2)
-            //    .OnceAsync<Game>();
+        //var dinos = await firebaseClient
+        //.Child("Games")
+        //.OrderByKey().OnceAsync<Game>();
+        //var task = await firebaseClient.Child("Games").PostAsync(new Game()).ConfigureAwait(false);
+        //Games.Add(task);
+        //var task = firebaseClient.Child("Games").PostAsync(new Game());
+        //task.Wait(1000);
+        //Games.Add(task.Result.Object);
+        //var task2 = await firebaseClient.Child("Games").PostAsync(Games[0]);
+        //task.
+        //task.RunSynchronously();
+        //task.Start();
+        //task.Wait();
+        //var testGame = task.Result;
+        //await firebaseClient
+        //    .Child("dinosaurs")
+        //    .Child("t-rex")
+        //    .PutAsync(new Game());
+        //var dinos = await firebaseClient
+        //    .Child("dinosaurs")
+        //    .OrderByKey()
+        //    .StartAt("pterodactyl")
+        //    .LimitToFirst(2)
+        //    .OnceAsync<Game>();
         //}
 
         public string LaunchGame(FirebaseObject<Game> game)
