@@ -13,6 +13,10 @@ namespace GameLauncherCloud_Client
         {
         }
 
+        public GameTime(GameTime otherToCopy) : this(otherToCopy.NbMinutes)
+        {
+        }
+
         public GameTime(int nbMinutes)
         {
             NbMinutes = nbMinutes;

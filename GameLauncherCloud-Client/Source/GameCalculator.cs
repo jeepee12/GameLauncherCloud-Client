@@ -147,7 +147,7 @@ namespace GameLauncherCloud_Client
                 // Create a timestamp with the date of the time played
                 currentGame?.Object.GameTimes.Add(
                     new KeyValuePair<DateTime, GameTime>(DateTime.Now,
-                        currentTime)); // Maybe we should push this new time directly to the database
+                        new GameTime(currentTime))); // Maybe we should push this new time directly to the database
                 // TODO push the time stamp and gametime directly to the database
                 // Reset the timer
                 currentTime.NbMinutes = 0;
