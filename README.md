@@ -10,7 +10,7 @@ Software used to launch video games and compile gaming time.
 
 - [X] Push the client data to the database
 
-- [ ] Various code and UX improvements
+- [ ] Various code and UX improvements (refresh on stop)
 
 ### Database
 - [X] Create the data base on fire base
