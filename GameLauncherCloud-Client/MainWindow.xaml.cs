@@ -132,6 +132,7 @@ namespace GameLauncherCloud_Client
         {
             SetGamesRadio(true);
             gameCalculator.StopGame();
+            RefreshGameTime();
         }
 
         private void SetGamesRadio(bool enable)

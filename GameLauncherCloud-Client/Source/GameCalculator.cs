@@ -69,6 +69,7 @@ namespace GameLauncherCloud_Client
                         {
                             gameInDB.Object.GameTimes.Add(
                                 new KeyValuePair<DateTime, GameTime>(DateTime.Now, steamTotalTime - totalTime));
+                            gamesUpdated.Add(gameInDB);
                         }
                     }
                     else if (steamTotalTime.GreaterThanZero())
