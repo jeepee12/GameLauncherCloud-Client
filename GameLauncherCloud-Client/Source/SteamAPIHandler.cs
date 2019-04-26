@@ -58,18 +58,26 @@ namespace GameLauncherCloud_Client
             await allGamesTask;
 
             var allGames = allGamesTask.Result;
-            var allRecentGames = allRecentGamesTask.Result;
-            var recentGamesList = allRecentGames.Data.RecentlyPlayedGames.ToList();
 
             foreach (var ownedGame in allGames.Data.OwnedGames)
             {
                 games.Add(ConstructGame(ownedGame));
-                recentGamesList.RemoveAll(model => model.AppId == ownedGame.AppId);
             }
 
-            foreach (var notOwnedGamePlayed in recentGamesList)
+            var allRecentGames = allRecentGamesTask.Result;
+            if (allRecentGames.Data.RecentlyPlayedGames != null)
             {
-                games.Add(ConstructGame(notOwnedGamePlayed));
+                var recentGamesList = allRecentGames.Data.RecentlyPlayedGames.ToList();
+
+                foreach (var ownedGame in allGames.Data.OwnedGames)
+                {
+                    recentGamesList.RemoveAll(model => model.AppId == ownedGame.AppId);
+                }
+
+                foreach (var notOwnedGamePlayed in recentGamesList)
+                {
+                    games.Add(ConstructGame(notOwnedGamePlayed));
+                }
             }
 
             return games;
