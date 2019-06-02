@@ -135,7 +135,9 @@ namespace GameLauncherCloud_Client
             }
             else
             {
-                errorMessage = "The game Url is null or empty.";
+                // No url provided, this mean we still want to check time but launch nothing.
+                gameTimer.Enabled = true;
+                currentTime = new GameTime();
             }
             return errorMessage;
         }
