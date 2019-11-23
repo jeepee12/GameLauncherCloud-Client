@@ -56,7 +56,7 @@ namespace GameLauncherCloud_Client
             bool firstGame = true;
             foreach (FirebaseObject<Game> game in gameCalculator.Games)
             {
-                if (game.Object.IsSteamGame)
+                if (game.Object.IsSteamGame || (game.Object.IsArchived && Keyboard.Modifiers != ModifierKeys.Control))
                     continue;
                 
                 RadioButton rb = AddAGameToUi(game);
@@ -87,6 +87,12 @@ namespace GameLauncherCloud_Client
         private void RefreshBtn_Click(object sender, RoutedEventArgs e)
         {
             RefreshGameTime();
+        }
+
+        private void ArchiveGameBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+            gameCalculator.ToggleArchive(selectedGameDB);
+            UpdateGameUi();
         }
 
         private void MainWindow1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -153,6 +159,8 @@ namespace GameLauncherCloud_Client
             GameName.Text = SelectedGame.Name;
             GameUrl.Text = SelectedGame.Url;
             GameImageUrl.Text = SelectedGame.ImageUrl;
+            ArchiveGameBtn.Content = SelectedGame.IsArchived ? "Unarchive" : "Archive";
+
 
             if (!string.IsNullOrEmpty(SelectedGame.ImageUrl) && File.Exists(SelectedGame.ImageUrl))
             {

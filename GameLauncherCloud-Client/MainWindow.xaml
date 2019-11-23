@@ -84,6 +84,7 @@
             <Button x:Name="SaveBtn" Content="Save" HorizontalAlignment="Left" Margin="749,10,0,0" VerticalAlignment="Top" Width="75" Click="SaveBtn_Click"/>
             <Button x:Name="RefreshBtn" Content="Refresh" HorizontalAlignment="Left" Margin="749,35,0,0" VerticalAlignment="Top" Width="75" Click="RefreshBtn_Click"/>
             <Button x:Name="AddAGameBtn" Content="Add a game" HorizontalAlignment="Left" Margin="749,60,0,0" VerticalAlignment="Top" Width="75" Click="AddAGameBtn_OnClick"/>
+            <Button x:Name="ArchiveGameBtn" Content="Archive" HorizontalAlignment="Left" Margin="749,85,0,0" VerticalAlignment="Top" Width="75" Click="ArchiveGameBtn_OnClick"/>
         </Grid>
     </Grid>
 </Window>

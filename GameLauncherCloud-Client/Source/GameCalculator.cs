@@ -154,8 +154,14 @@ namespace GameLauncherCloud_Client
                 // TODO push the time stamp and gametime directly to the database
                 // Reset the timer
                 currentTime.NbMinutes = 0;
-                gamesUpdated.Add(currentGame);
+                NotifyGameInformationUpdated(currentGame);
             }
+        }
+
+        public void ToggleArchive(FirebaseObject<Game> game)
+        {
+            game.Object.IsArchived = !game.Object.IsArchived;
+            NotifyGameInformationUpdated(game);
         }
 
         public async Task SaveData()

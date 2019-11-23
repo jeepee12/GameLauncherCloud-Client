@@ -17,6 +17,8 @@ namespace GameLauncherCloud_Client
         public string ImageUrl;
         [JsonProperty(PropertyName = "IsSteamGame")]
         public bool IsSteamGame;
+        [JsonProperty(PropertyName = "IsArchived")]
+        public bool IsArchived;
 
         [JsonProperty(PropertyName = "Gametimes")]
         public List<KeyValuePair<DateTime, GameTime>> GameTimes;
@@ -44,6 +46,7 @@ namespace GameLauncherCloud_Client
             ImageUrl = imageUrl;
             GameTimes = gameTimes;
             IsSteamGame = isSteamGame;
+            IsArchived = false;
         }
 
         public GameTime CalculateTotalTime()
