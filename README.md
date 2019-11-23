@@ -20,3 +20,6 @@ Software used to launch video games and compile gaming time.
 
 ### Steam data
 - [X] Fetch and push the Steam data in the database
+
+### Github
+- [ ] Add screenshots.
