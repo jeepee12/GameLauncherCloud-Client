@@ -10,6 +10,8 @@ Software used to launch video games and compile gaming time.
 
 - [X] Push the client data to the database
 
+- [X] Supporting game archive (Hold Ctrl on boot to see archived games)
+
 - [ ] Various code and UX improvements
 
 ### Database
