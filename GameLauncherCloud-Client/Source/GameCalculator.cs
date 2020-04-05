@@ -65,6 +65,16 @@ namespace GameLauncherCloud_Client
                     if (gameInDB != null)
                     {
                         var totalTime = gameInDB.Object.CalculateTotalTime();
+
+                        #region POP_TU202004_HACK
+                        if (gameInDB.Object.Name == "Divinity: Original Sin 2")
+                        {
+                            // On the 30th of march 2020, the process of Divinity never shutdown so the game was cosider running for the full after noon and it wasn't...
+                            // Removing 363 minutes to bring it back to a "normal" lunch time (60 minutes)
+                            steamTotalTime -= new GameTime(363);
+                        }
+                        #endregion
+
                         if (totalTime < steamTotalTime)
                         {
                             gameInDB.Object.GameTimes.Add(
