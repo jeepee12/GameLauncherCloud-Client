@@ -14,7 +14,6 @@ namespace GameLauncherCloud_Client
         // Firebase with C#
         // Medium article: https://medium.com/step-up-labs/firebase-c-library-5c342989ad18
         // FirebaseDatabase.net https://github.com/step-up-labs/firebase-database-dotnet
-        // FirebaseAuthentication.net https://github.com/step-up-labs/firebase-authentication-dotnet
         // TODO add the possiblity to upload the games icon to the database
         // File upload https://github.com/step-up-labs/firebase-storage-dotnet
 
@@ -38,7 +37,13 @@ namespace GameLauncherCloud_Client
         public async Task Start()
         {
             // Firebase
-            firebaseClient = new FirebaseClient("https://tritor-game-launcher.firebaseio.com/");
+            FirebaseAuthenticationHandler authHandler = new FirebaseAuthenticationHandler();
+            if (!authHandler.Start())
+                return;
+
+            var authTask = await authHandler.GetAuth();
+            firebaseClient = new FirebaseClient("https://tritor-game-launcher.firebaseio.com/", new FirebaseOptions { AuthTokenAsyncFactory = () => Task.FromResult(authTask.FirebaseToken) });
+
             Games = new List<FirebaseObject<Game>>();
             gamesUpdated = new List<FirebaseObject<Game>>();
 

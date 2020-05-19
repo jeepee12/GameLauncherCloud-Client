@@ -147,6 +147,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Source\FirebaseAuthenticationHandler.cs" />
     <Compile Include="Source\Game.cs" />
     <Compile Include="Source\GameCalculator.cs" />
     <Compile Include="Source\GameTime.cs" />
