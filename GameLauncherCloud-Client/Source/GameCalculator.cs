@@ -24,6 +24,7 @@ namespace GameLauncherCloud_Client
         private List<FirebaseObject<Game>> gamesUpdated;
 
         private FirebaseClient firebaseClient;
+        private FirebaseAuthenticationHandler authHandler;
         private Timer gameTimer = new Timer();
         private GameTime currentTime;
         private FirebaseObject<Game> currentGame;
@@ -37,12 +38,11 @@ namespace GameLauncherCloud_Client
         public async Task Start()
         {
             // Firebase
-            FirebaseAuthenticationHandler authHandler = new FirebaseAuthenticationHandler();
+            authHandler = new FirebaseAuthenticationHandler();
             if (!authHandler.Start())
                 return;
 
-            var authTask = await authHandler.GetAuth();
-            firebaseClient = new FirebaseClient("https://tritor-game-launcher.firebaseio.com/", new FirebaseOptions { AuthTokenAsyncFactory = () => Task.FromResult(authTask.FirebaseToken) });
+            await UpdateConnection();
 
             Games = new List<FirebaseObject<Game>>();
             gamesUpdated = new List<FirebaseObject<Game>>();
@@ -181,6 +181,8 @@ namespace GameLauncherCloud_Client
 
         public async Task SaveData()
         {
+            await UpdateConnection();
+
             // Probably only push the games information (name, url, etc)
             foreach (FirebaseObject<Game> game in gamesUpdated)
             {
@@ -204,6 +206,12 @@ namespace GameLauncherCloud_Client
         private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
             currentTime.NbMinutes++;
+        }
+
+        private async Task UpdateConnection()
+        {
+            var authTask = await authHandler.GetAuth();
+            firebaseClient = new FirebaseClient("https://tritor-game-launcher.firebaseio.com/", new FirebaseOptions { AuthTokenAsyncFactory = () => Task.FromResult(authTask.FirebaseToken) });
         }
     }
 }
