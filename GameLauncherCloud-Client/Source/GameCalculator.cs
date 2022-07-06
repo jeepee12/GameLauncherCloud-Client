@@ -79,6 +79,13 @@ namespace GameLauncherCloud_Client
                             steamTotalTime -= new GameTime(363);
                         }
                         #endregion
+                        #region POP_TU202207_HACK
+                        if (gameInDB.Object.Name == "Factorio")
+                        {
+                            // In july 2022, on the 3-4-5, I had to keep the game open to get an acheivement. I would say that about 32 hours were idle. (1920 minutes)
+                            steamTotalTime -= new GameTime(1920);
+                        }
+                        #endregion
 
                         if (totalTime < steamTotalTime)
                         {
