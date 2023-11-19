@@ -12,6 +12,8 @@ Software used to launch video games and compile gaming time.
 
 - [X] Supporting game archive (Hold Ctrl on boot to see archived games)
 
+- [ ] Adding command line argument to auto close after sync
+
 - [ ] Various code and UX improvements
 
 ### Database
