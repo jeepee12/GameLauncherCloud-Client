@@ -29,6 +29,8 @@ namespace GameLauncherCloud_Client
         private RadioButton selectedGameRadioButton;
         private const string DefaultImage = "pack://siteoforigin:,,,/Resources/controllerRezised.png";
         private bool isClosing = false;
+        
+        public bool IsSyncOnly { get; set; }
 
         // TODO add the possibility to reorder games
 
@@ -37,14 +39,20 @@ namespace GameLauncherCloud_Client
             InitializeComponent();
 
             gameCalculator = new GameCalculator();
-            UpdateGames();
+            StartGameCalculator();
         }
 
-        private async Task UpdateGames()
+        private async Task StartGameCalculator()
         {
             await gameCalculator.Start();
             AddGamesToUi();
             UpdateGameUi();
+
+            if (IsSyncOnly)
+            {
+                await gameCalculator.SaveData();
+                Close();
+            }
         }
 
         private void AddGamesToUi()
